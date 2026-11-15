@@ -26,6 +26,7 @@ Produce and review technical documentation that is clear, actionable, and mainta
 
 ## Workflow
 
+0. Apply `references/guidelines.md` (Karpathy guidelines plus clean-commit rules) to all work in this skill: state assumptions, keep changes minimal and surgical, define verifiable success criteria, and keep commit messages free of trailers and tool/model metadata.
 1. Classify task: `build` or `review`; context: `brownfield` or `evergreen`.
 2. Inventory the requested file, directory, or diff scope early. Include governance and product docs for documentation-wide work. Repository size alone does not expand a scoped review.
 3. Detect multilingual scope (README/docs in multiple languages) and define required parity level.
