@@ -15,10 +15,12 @@ Before adding test, answer:
 
 1. Protected observable behavior, invariant, or independent contract?
 2. Credible regression that makes it fail?
-3. Why existing proof misses it? Each contract: one primary owner at strongest
+3. Expected value from an independent oracle (spec, known example, external
+   caller, protocol fixture), not the code under test or a copy of its algorithm?
+4. Why existing proof misses it? Each contract: one primary owner at strongest
    boundary. Another layer needs distinct transport/lifecycle risk. Extend
    tables/shared fixtures; consolidate repeated setup.
-4. Export, flag, wrapper, injection hook with no production caller needed?
+5. Export, flag, wrapper, injection hook with no production caller needed?
    Move proof to real boundary instead.
 
 - Pick the cheapest boundary that can still fail for the real regression: pure
@@ -38,6 +40,14 @@ Before adding test, answer:
 - Fixtures must not fabricate owner receipts/order or claim persistence path
   never writes.
 - Negative controls must fail at intended guard; names must match exercised behavior.
+- Reject correction pile-ups, same-branch parameter permutations, assertions
+  dominated by a stronger one, fixture-tautological tests, coverage-owned tests.
+- Mutual-support clusters (checksum, validator, receipt, fallback plus the tests
+  that only exist for them): trace to an
+  [independent root](references/audit.md#closed-justification-loops); none
+  found, delete seam and tests together.
+- Duplicate only under [dominance](references/audit.md#dominance): same owner,
+  branch, result, failure domain, equal or stronger oracle.
 - Auditing candidates: use [full checklist](references/audit.md#junk-patterns).
 
 ## Retention bar
@@ -53,7 +63,11 @@ Before adding test, answer:
 
 - Before audit edit: read [candidate evidence and workflow](references/audit.md#candidate-evidence);
   inspect full owners/callers/history; record remaining proof before deletion.
-- Delete obsolete production seams with tests; never optimize for deletion counts.
+- Delete obsolete production seams with tests; never optimize for deletion,
+  test, assertion, or coverage counts.
+- Adding a test during an audit is not the default; see
+  [when to add](references/audit.md#adding-tests-during-an-audit).
+- Compare collected-test counts, skips, and deselections before and after.
 - Proof policy: run owner + sibling tests and the project's changed-file checks,
   using the narrowest command that can fail for the intended reason; never edit
   the checkout during an active test run; then self-review the diff.
