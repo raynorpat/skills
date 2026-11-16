@@ -47,6 +47,7 @@ These six are linked. A driving skill decides what shapes the work and calls pla
 | [technical-deslop](technical-deslop/SKILL.md) | Removes AI-style noise from staged and branch diffs without changing behavior. Includes C/C++ guidance. |
 | [technical-documentation](technical-documentation/SKILL.md) | Builds and reviews technical docs and agent instruction files (`AGENTS.md`, `CLAUDE.md`). Carries the Karpathy coding guidelines and clean-commit rules. |
 | [technical-ci-automation](technical-ci-automation/SKILL.md) | CI/CD pipelines and quality gates on GitHub Actions, Gitea Actions, or TeamCity. |
+| [reverse-engineer-anything](reverse-engineer-anything/SKILL.md) | Reverse engineering of native, managed, JavaScript, packaged, and firmware targets with the REA tool, which must be installed separately. Adds a guide for DOS and 16-bit Windows targets. |
 
 ### Writing and design
 
@@ -69,6 +70,7 @@ Every skill here started from someone else's work and was then renamed, generali
 | dev-spec-driven, dev-test-driven, dev-source-driven, dev-doubt-driven, dev-incremental-implementation, planning-and-task-breakdown | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills/tree/main/skills) | MIT | Renamed and cross-linked into one workflow; references to skills not in this repo removed; doubt-driven's cross-model step replaced with a higher-tier reviewer |
 | writing-deslop | [axel-pm/deslopify](https://github.com/axel-pm/deslopify) | MIT | Form detection, draft mode, and `references/forms.md` for blog posts, fiction, and role play |
 | ui-deslop | [kmaida/deslop-skills](https://github.com/kmaida/deslop-skills/tree/main/deslop-ui) | None stated | Renamed; generation checklist and roughly double the catalog |
+| reverse-engineer-anything | [morluto/rea](https://github.com/morluto/rea/tree/main/.agents/skills/reverse-engineer-anything) | MIT | `references/dos-and-win16.md` added and routed from `SKILL.md` |
 | novel-writing | [wgwtest/novel-writing](https://github.com/wgwtest/novel-writing/tree/main/novel-writing) | MIT | Manuscript checker extended to English |
 
 Two upstreams have no license file: `kmaida/deslop-skills` (ui-deslop) and `multica-ai/andrej-karpathy-skills` (the guidelines inside technical-documentation). Get permission or replace that material before publishing this repo.

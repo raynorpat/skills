@@ -117,6 +117,13 @@ explicit path or endpoint and do not need it.
   Linux; see the [firmware guide](https://github.com/morluto/rea/blob/main/docs/guides/firmware/firmware-analysis.md).
 - ESP32-family app or bootloader image (`0xE9` magic): `inspect_artifact`
   without a provider; see the ESP section of `references/native-and-artifacts.md`.
+- DOS program (MZ `.EXE`, headerless `.COM`, `.SYS` driver), Windows 3.x
+  NE application or driver, DOS-extender or VxD LE/LX image, or the 16-bit
+  half of a Windows 95-era product: read
+  [DOS and 16-bit Windows](references/dos-and-win16.md) first. Identify the
+  real format behind the MZ stub, then `open_binary` (with `format: "dos-com"`
+  for COM). Report what the server supports for that format instead of
+  assuming it.
 - .NET NativeAOT PE/ELF: native Ghidra analysis. Native code can yield pseudocode;
   consult the NativeAOT workflow in `references/native-and-artifacts.md` for
   optional metadata recovery and its supported host/layout boundary.
@@ -579,6 +586,9 @@ as complete while required questions remain open.
 
 - Native binaries, managed assemblies, archives, and extraction:
   [references/native-and-artifacts.md](references/native-and-artifacts.md)
+- DOS MZ/COM programs, Windows 3.x NE files, DOS extenders, VxDs, and
+  Windows 95 thunks:
+  [references/dos-and-win16.md](references/dos-and-win16.md)
 - ASARs, extracted JavaScript, feature tracing, and version comparison:
   [references/javascript-applications.md](references/javascript-applications.md)
 - Android APK declarations, classes, methods, and static references:
