@@ -38,6 +38,29 @@ The reflex itself is the problem. These are very hard to justify.
 - **Pill-shaped gradient CTA buttons** as the default button style. Fix: a button style that
   fits the system; reserve emphasis for the one primary action.
 
+- **Icon chip on every card.** A small icon inside a tinted rounded square at the top left of
+  each card, each chip a different pastel. Reads as the stock feature-card recipe. Fix: drop the
+  chip, or use an icon only where it distinguishes one item from its neighbors.
+- **Fake window chrome.** Three traffic-light dots and a title bar drawn around a screenshot,
+  code block, or terminal to make it "look like an app." Fix: show the real product in its real
+  frame, or show the content with no frame.
+- **Floating mock notification cards.** Tilted mini-cards drifting around the hero
+  (`+$4,200 revenue`, `New signup`) that correspond to nothing in the product. Fix: one honest
+  screenshot or a working example.
+- **Perspective-tilted hero screenshot with a glow.** The dashboard image rotated in 3D with a
+  colored halo. Fix: show the product flat and legible at a size where its text can be read.
+- **Chips and badges as texture.** `New`, `Beta`, `Pro`, `AI` labels scattered across nav
+  items and cards with no release state behind them. Fix: badge only real, current state.
+- **Gradient-fill avatar circles.** Initials on a random gradient for every user row, used to
+  add color. Fine when it is the product's real fallback avatar. Slop as decoration.
+- **Border, ring, and shadow stacked on one surface.** Three kinds of edge on the same card.
+  Fix: pick one way to separate a surface and use it consistently.
+- **Everything is a card.** Page sections, single sentences, and lone buttons each wrapped in
+  a bordered, padded box. Fix: use a card only for a discrete object a user can act on or
+  compare.
+- **Tooltip on everything.** Hover text repeating the visible label. Fix: tooltips only for
+  icon-only controls and truncated text.
+
 ### Color and background
 
 - **Purple / neon gradients on dark.** The default AI palette family: purple-to-blue,
@@ -58,6 +81,22 @@ The reflex itself is the problem. These are very hard to justify.
   genuinely layers over content (overlays, sticky headers over scrolling media).
 - **Sparklines and mini-charts as decoration.** Charts that measure nothing. Fix: if it is
   not visualizing real data a user needs, remove it.
+
+- **Animated or conic gradient border.** A moving "beam" tracing the edge of a card or input.
+  Fix: a static border, or a focus state that only appears on focus.
+- **A different tint per card.** Blue, green, purple, amber, and pink cards in one grid, the
+  colors encoding nothing. Fix: one surface color; use color only where it carries a category
+  or state the user needs.
+- **Opacity as the whole color system.** Every surface `white/5`, every border `white/10`,
+  every label `white/60`. It produces a uniform haze with no hierarchy. Fix: a small set of
+  named, opaque surface and text colors.
+- **Low-contrast gray text.** Light gray body or secondary text on white, or mid-gray on dark,
+  chosen because it looks refined. It fails contrast checks and reads as timid. Fix: meet WCAG
+  AA and get hierarchy from size and weight.
+- **The default accent.** The generator's or framework's stock indigo, violet, or blue used as
+  the brand color because nothing else was chosen. Fix: derive the accent from the product.
+- **Noise or grain overlay** applied to add "texture" over an otherwise default layout. Same
+  test as the grid background: brand reinforcement or nothing.
 
 ### House defaults and unmade decisions
 
@@ -81,6 +120,18 @@ Every generator has a house style, and slop points in two opposite directions: l
 Swapping one house style for another is not deslopping; it trades a loud provenance tell for
 a quiet one. When generating, counter your own defaults by making context-driven decisions,
 not by imitating a different generator's defaults.
+
+- **Placeholder identity shipped as content.** `Acme Inc`, `John Doe`, `jane@example.com`,
+  `Lorem ipsum`, placeholder-image services, and suspiciously round numbers left in a deliverable.
+  Fix: use the user's real content; where it does not exist, mark placeholders visibly as
+  placeholders so nobody mistakes them for data.
+- **One typeface doing nothing.** The framework default at two weights, with an oversized,
+  tightly tracked headline as the only typographic idea. Fix: choose the face and build a
+  scale with real contrast between levels.
+- **Monospace as "technical" seasoning.** Mono type on labels, stats, and eyebrows in a
+  product that is not about code. Fine for code, IDs, and tabular figures. Slop as mood.
+- **One icon set at one size and stroke** applied to every label, straight from the library.
+  Fix: icons where they add recognition, sized and weighted to the type beside them.
 
 ### The templated landing page
 
@@ -106,6 +157,44 @@ they form the page every generator produces, recognizable at a glance:
 Fix: structure the page around the product's actual argument. Vary alignment, section
 anatomy, and card weight by importance. Ship only sections with real content behind them.
 
+### The templated dashboard
+
+The app-side equivalent. Flag the assembly, not the pieces:
+
+- greeting header (`Welcome back, John 👋`) with a date-range picker that does nothing
+- a row of four KPI cards, each with an icon, a big number, and `+12.5% from last month` in green
+- one area chart with a gradient fill beside a "Recent activity" list
+- a left sidebar with an icon beside every item and an "Upgrade to Pro" card pinned to the bottom
+- a table that uses zebra rows, borders, hover highlight, avatars, status pills, and a kebab
+  menu all at once
+- a user menu with a gradient avatar and a fictional name
+
+Fix: lead with the one thing this user came to do or check. Show numbers only when they are
+real and a decision depends on them. Give the primary task most of the screen.
+
+### The templated chat and auth screens
+
+- **Chat.** "How can I help you today?" centered above a two-by-two grid of prompt-starter
+  chips, a gradient assistant avatar, and a sparkle on the send button. Fix: starters only when
+  they reflect what this product can actually do; otherwise an input and nothing else.
+- **Auth.** A centered card with a logo, a row of social sign-in buttons for providers that are
+  not wired up, an "or continue with" divider, and a testimonial panel on the other half. Fix:
+  only the sign-in methods that exist.
+
+### Dead and fake interface
+
+Controls that imply function they do not have. These are worse than decoration because they
+mislead:
+
+- buttons, tabs, filters, and search fields that do nothing
+- links that point to `#`
+- a command palette, notification bell, or settings gear with nothing behind it
+- pagination and counts over data that is not there
+- only the first tab or first nav item implemented
+
+Fix: build it, visibly disable it with a reason, or remove it. In a mockup, say which parts
+are inert.
+
 ### Iconography
 
 - **The benefit icon triad: Zap = fast, Shield = secure, Sparkles = AI.** As a set, an
@@ -121,11 +210,49 @@ anatomy, and card weight by importance. Ship only sections with real content beh
   the one or two moments that earn it.
 - **`transition-all` as a reflex.** Fix: transition the specific properties that change.
 
+- **Cursor-following effects.** Spotlight that tracks the pointer across cards, 3D tilt on
+  hover, magnetic buttons. Fix: a plain hover state.
+- **Typewriter and text-reveal headlines.** The hero sentence typed out or cycling through
+  words. It delays the one thing the visitor came to read. Fix: static text.
+- **Looping ambient motion.** Drifting gradient backgrounds, floating shapes, an endless
+  marquee, a bouncing "scroll down" arrow. Fix: remove; motion should answer an action.
+- **Skeleton shimmer for content that is already there**, or a spinner on an instant action.
+  Fix: loading states only where there is real latency.
+- **Orchestrated page-load entrance** on a tool people open many times a day. Fix: appear
+  immediately.
+- **Confetti and celebration** for routine actions. Fine for a real, rare milestone.
+- **Motion with no reduced-motion fallback.** Fix: honor `prefers-reduced-motion`.
+
 ### Density
 
 - **Uniform airiness.** Maximum padding between every section, oversized card padding, low
   information density on every surface. Real products vary density with purpose: dense where
   users work, spacious where they decide. Fix: set density per surface, not globally.
+
+- **Everything centered in one narrow column.** Every section the same max width and
+  alignment, so nothing has more weight than anything else. Fix: let important content take
+  more room and vary alignment with purpose.
+- **Full-viewport hero on a tool.** A screen-tall banner before the user reaches anything
+  usable. Fix: put the working surface first.
+- **Equal-height, equal-width grids for unequal things.** Fix: size by importance and content.
+
+### States and resilience
+
+Generated UI is usually a single screenshot of the best case. The missing states are the tell:
+
+- **Happy path only.** No empty, loading, error, or disabled state anywhere. Fix: design each
+  state for every data-backed surface.
+- **Perfectly uniform sample data.** Every name the same length, every title one line, no
+  missing fields, no long numbers. Fix: test with long, short, missing, and awkward content,
+  and decide how each truncates or wraps.
+- **Fixed-width desktop layout only.** Nothing changes below a laptop width. Fix: decide the
+  small-screen behavior of each region.
+- **Focus rings removed** and hover as the only interaction feedback. Fix: visible focus on
+  every interactive element; keyboard operation for every control.
+- **Tap targets sized for a cursor.** Fix: at least 44 by 44 CSS pixels for touch.
+- **Web habits in a native app.** Web-style cards, custom toggles, and hamburger menus where
+  the platform has its own navigation and controls. Fix: use platform conventions unless the
+  brand requires otherwise.
 
 ## Tier 2: fine when meaningful, slop only when reflexive
 
@@ -153,6 +280,44 @@ Keep them when they carry information; cut them only when they are decoration.
   clickable cards. Slop when every surface inflates on hover.
 - **Dark-mode toggle.** Fine. It is a normal convention. Listed only to say: do not flag it.
 
+- **Icon inside an input.** Good for search and for fields whose type is otherwise unclear.
+  Slop when every field gets a leading icon.
+- **Empty-state illustration.** Good when the empty state is a real first-run moment and the
+  illustration explains what goes here. Slop as a stock drawing above "Nothing here yet."
+- **Modal dialog.** Good for a decision that must block. Slop when every create, edit, and
+  detail view opens in one.
+- **Tabs.** Good for peer views of the same object. Slop when used to hide a short page.
+- **Sidebar navigation.** Good for an app with many destinations. Slop on a three-page site.
+- **Avatar.** Good where identity matters (authorship, assignment, presence). Slop as a
+  colored circle beside every row.
+- **Shadow.** Good for something that floats above the page (menus, dialogs, dragged items).
+  Slop as a soft blur under every card.
+- **Card.** Good for a discrete, comparable object. Slop as a wrapper for layout.
+- **Skeleton loader.** Good for slow, layout-stable content. Slop everywhere else.
+- **Toast.** Good to confirm a background result. Slop to announce what the screen already
+  shows.
+
+## Code tells
+
+Visible when reviewing source. Most point at a visual tell above.
+
+- **Utility-class soup repeated verbatim** across elements instead of a component or token.
+- **Hardcoded hex values and magic-number spacing** beside an existing token system.
+- **`div` with a click handler** where a `button` or `a` belongs; missing labels and `alt`
+  text; headings chosen by size instead of structure.
+- **`outline: none`** with no replacement focus style.
+- **Arbitrary z-index escalation** (`z-50`, `z-[9999]`) in place of a stacking plan.
+- **`cursor: pointer` and hover styles** on elements that do nothing.
+- **Inline SVG icons duplicated** in every file, or three icon libraries imported at once.
+- **Animation libraries imported** to fade one section in.
+- **Dark mode half-implemented.** Some surfaces themed, others hardcoded light.
+- **Remote placeholder images and fonts** loaded from third-party services in a deliverable.
+- **Comments narrating the markup** (`<!-- Hero Section -->` above every block) and emoji in
+  class names, logs, or commit text.
+
+Fix: report these with the visual tell they produce; the remedy is the same decision made once
+and reused.
+
 ## Copy tells
 
 - **Em dashes** (the `—` character) in UI copy. Never use it as clause or parenthetical
@@ -161,6 +326,17 @@ Keep them when they carry information; cut them only when they are decoration.
   empower, elevate, "10x your." Fix: say what the product does in concrete terms.
 - **The imperative verb-pair headline formula** ("Ship faster. Build smarter."). Tolerable
   once; a tell when it is every heading on the page.
+- **Generic button labels.** `Get started`, `Learn more`, `Submit`, `Click here` on every
+  action. Fix: name what happens (`Create invoice`, `Compare plans`).
+- **Stock microcopy.** `Oops! Something went wrong`, `No items yet. Create your first one to
+  get started!`, `Welcome back`, `You're all set!`. Fix: say what happened and what to do next,
+  in the product's own voice.
+- **Hero formulas.** "The all-in-one platform for X", "Your X, reimagined", "X, but better",
+  "Built for developers, by developers", "Trusted by teams at". Fix: state what it does and
+  for whom in plain words.
+- **Exclamation marks and emoji** in system messages and buttons.
+- **Footer filler.** "Made with ❤️", an outdated or invented copyright line, link columns to
+  pages that do not exist.
 - **Casing inconsistency.** Title Case buttons next to sentence-case headings and back again.
   Pick one convention (sentence case unless the brand system says otherwise) and hold it.
 
@@ -176,8 +352,15 @@ For Tier 1, flag any occurrence. For Tier 2, the check is conditional: name the 
 ask whether it carries real meaning here or is decorative, and only flag the decorative case.
 Example: "status pill present: does it map to a real distinct state, or is it texture?"
 
-For the templated landing page, flag the *pattern* when three or more of its pieces co-occur,
-then list the pieces; do not file ten separate findings for one templated page.
+For the templated landing page, dashboard, chat, and auth layouts, flag the *pattern* when
+three or more of its pieces co-occur, then list the pieces; do not file ten separate findings
+for one templated page.
+
+Report dead and fake interface, fabricated data, and failed contrast or focus first: they
+mislead or exclude users, which is worse than looking generic. Then the style tells.
+
+If a design system or brand guide is present, check it before flagging. A tell that the
+system specifies is a decision; report it only if the system is applied inconsistently.
 
 ### The AI Slop Test
 
@@ -187,3 +370,13 @@ Finish every review with the gut-check:
 
 If yes, that is the problem. A distinctive interface makes someone ask "how was this made?",
 not "which AI made this?"
+
+## Provenance
+
+The base catalog is from deslop-ui by Kim Maida. Added here: icon chips, fake window chrome,
+floating mock cards, tilted hero screenshots, badge texture, gradient avatars, stacked edges,
+card-wrapping, tooltip overuse; gradient borders, per-card tints, opacity color systems,
+low-contrast text, default accents, grain; placeholder identity, single-typeface and monospace
+defaults, single icon set; the templated dashboard, chat, and auth layouts; dead and fake
+interface; the extra motion entries; the layout entries under Density; States and resilience;
+the extra Tier 2 entries; Code tells; the extra copy tells; and the review ordering.
