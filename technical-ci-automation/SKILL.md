@@ -1,6 +1,6 @@
 ---
 name: technical-ci-automation
-description: Automates CI/CD pipeline setup. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, or establish deployment strategies.
+description: Automates CI/CD pipeline setup on GitHub Actions, Gitea Actions, or TeamCity. Use when setting up or modifying build and deployment pipelines. Use when you need to automate quality gates, configure test runners in CI, port a pipeline between CI systems, or establish deployment strategies.
 ---
 
 # CI/CD and Automation
@@ -52,6 +52,33 @@ Pull Request Opened
 ```
 
 **No gate can be skipped.** If lint fails, fix lint — don't disable the rule. If a test fails, fix the code — don't skip the test.
+
+## Choosing the CI System
+
+The gates above are the same on every system; only the configuration differs. Find out which system the repository uses before writing anything, and do not introduce a second one alongside it.
+
+| Evidence in the repository | System | Where to look |
+|---|---|---|
+| `.github/workflows/*.yml`, remote on github.com | GitHub Actions | The examples in this file |
+| `.gitea/workflows/*.yaml`, or `.github/workflows/` with a Gitea (or Forgejo) remote | Gitea Actions | [references/gitea-actions.md](references/gitea-actions.md) |
+| `.teamcity/settings.kts`, or the team names a TeamCity server | TeamCity | [references/teamcity.md](references/teamcity.md) |
+
+No evidence: ask which system the project uses. If the answer is "none yet", pick the one that matches where the code is hosted.
+
+The same idea in each system:
+
+| Concern | GitHub Actions | Gitea Actions | TeamCity |
+|---|---|---|---|
+| Config location | `.github/workflows/*.yml` | `.gitea/workflows/*.yaml` | `.teamcity/settings.kts` (Kotlin DSL) |
+| Unit of work | Job | Job | Build configuration |
+| Where it runs | Hosted or self-hosted runner | Self-hosted `act_runner`; `runs-on` must match a registered label | Build agent chosen by agent requirements |
+| Ordering | `needs:` | `needs:` | Snapshot dependencies (build chain) |
+| Secrets | `secrets.X` | `secrets.X` (names cannot start with `GITHUB_` or `GITEA_`) | Password parameters, `%name%` |
+| Service containers | `services:` | `services:` (container runners) | Docker Compose step |
+| PR status | Built in | Built in | Commit Status Publisher feature |
+| Dependency updates | Dependabot or Renovate | Renovate | Renovate |
+
+The examples in the rest of this file are written for GitHub Actions. For Gitea Actions they work after the adjustments in the reference (runner labels, where `uses:` resolves, keys that may be ignored). For TeamCity, translate them using the concept mapping in the reference.
 
 ## GitHub Actions Configuration
 
@@ -134,7 +161,7 @@ jobs:
           DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
 ```
 
-> **Note:** Even for CI-only test databases, use GitHub Secrets for credentials rather than hardcoding values. This builds good habits and prevents accidental reuse of test credentials in other contexts.
+> **Note:** Even for CI-only test databases, use the CI system's secret store (GitHub or Gitea secrets, TeamCity password parameters) for credentials rather than hardcoding values. This builds good habits and prevents accidental reuse of test credentials in other contexts.
 
 ### E2E Tests
 
@@ -186,7 +213,7 @@ Agent fixes → pushes → CI runs again
 ```
 Lint failure → Agent runs `npm run lint -- --fix` and commits
 Type error  → Agent reads the error location and fixes the type
-Test failure → Agent follows debugging-and-error-recovery skill
+Test failure → Agent reproduces it locally, finds the root cause, then fixes it
 Build error → Agent checks config and dependencies
 ```
 
@@ -277,7 +304,7 @@ jobs:
 .env.example       → Committed (template for developers)
 .env                → NOT committed (local development)
 .env.test           → Committed (test environment, no real secrets)
-CI secrets          → Stored in GitHub Secrets / vault
+CI secrets          → Stored in the CI system's secret store / vault
 Production secrets  → Stored in deployment platform / vault
 ```
 
@@ -286,6 +313,8 @@ CI should never have production secrets. Use separate secrets for CI testing.
 ## Automation Beyond CI
 
 ### Dependabot / Renovate
+
+Dependabot exists only on GitHub. On Gitea and with TeamCity, use Renovate (see the references).
 
 ```yaml
 # .github/dependabot.yml
@@ -326,7 +355,7 @@ Slow CI pipeline?
 ├── Optimize the test suite
 │   └── Remove slow tests from the critical path, run them on a schedule instead
 └── Use larger runners
-    └── GitHub-hosted larger runners or self-hosted for CPU-heavy builds
+    └── Larger hosted runners, or bigger self-hosted runners/agents, for CPU-heavy builds
 ```
 
 **Example: caching and parallelism**
@@ -391,3 +420,8 @@ After setting up or modifying CI:
 - [ ] Secrets are stored in the secrets manager, not in code
 - [ ] Deployment has a rollback mechanism
 - [ ] Pipeline runs in under 10 minutes for the test suite
+
+## References
+
+- [Gitea Actions](references/gitea-actions.md): what changes when a GitHub-style workflow runs on Gitea, runner labels, unsupported keys, Renovate.
+- [TeamCity](references/teamcity.md): concept mapping, a Kotlin DSL pipeline, build chains, deployments, secrets, REST API for failures.
