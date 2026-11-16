@@ -34,3 +34,13 @@ Use this checklist during cleanup.
 - Edit only changed hunks unless a nearby fix is required for coherence.
 - Avoid non-requested refactors and unrelated formatting churn.
 - If uncertain whether a pattern is intentional, ask before changing behavior.
+
+## C/C++-specific guidance
+
+- Remove `NULL`/`nullptr` checks on pointers the local contract guarantees non-null; keep them at API boundaries and after allocation.
+- Drop redundant C-style or `static_cast`/`reinterpret_cast` casts that only silence warnings; fix the type instead.
+- Remove comments that restate the code or narrate ownership the types already show; keep comments on lifetime, locking, and ABI.
+- Do not add `try/catch`, wrapper classes, or RAII shims where the codebase uses plain C idioms (`goto cleanup`, manual free).
+- Match the local style for `const`, `auto`, `nullptr` vs `NULL`, `#define` vs `constexpr`, and header guards; do not modernize unprompted.
+- Keep `assert`s, bounds checks, `volatile`, memory barriers, `#ifdef` platform branches, and error-code returns; they are rarely slop.
+- Never touch macros, struct layout, or `extern "C"` blocks for style alone.
