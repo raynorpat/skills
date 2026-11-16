@@ -1,6 +1,6 @@
 ---
-name: reverse-engineer-anything
-description: Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA, and build agent environments (AgentEnv bundles) of web applications from a live instance or a capture, and of Linux desktop apps with a task from a request. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decompile code, or guide a reconstruction. Skip REA for ordinary source-repository architecture analysis.
+name: technical-reverse-engineering
+description: Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA, and build agent environments (AgentEnv bundles) of web applications from a live instance or a capture, and of Linux desktop apps with a task from a request. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decompile code, or guide a reconstruction. Also covers DOS and 16-bit Windows programs, games and their DirectX/OpenGL usage, and scripted disassembly with Capstone. Skip REA for ordinary source-repository architecture analysis.
 metadata:
   version: "62"
 ---
@@ -124,6 +124,17 @@ explicit path or endpoint and do not need it.
   real format behind the MZ stub, then `open_binary` (with `format: "dos-com"`
   for COM). Report what the server supports for that format instead of
   assuming it.
+- Game, or any program best understood through what it draws: read
+  [games and graphics](references/games-and-graphics.md). Identify the
+  graphics API and engine from imports and bundled DLLs, then use the frame-end
+  call and the texture, buffer, and transform calls as landmarks back to the
+  main loop, asset loaders, and game state. DirectX calls go through COM
+  tables and need slot-to-method mapping; OpenGL calls are named imports.
+- A census over raw bytes (every interrupt, port access, or table call), a
+  region with no recognized functions, or a format the server does not
+  support: [scripted disassembly](references/scripted-disassembly.md) with
+  Capstone and `scripts/capstone_scan.py`. Its output is your own observation,
+  not REA Evidence.
 - .NET NativeAOT PE/ELF: native Ghidra analysis. Native code can yield pseudocode;
   consult the NativeAOT workflow in `references/native-and-artifacts.md` for
   optional metadata recovery and its supported host/layout boundary.
@@ -589,6 +600,10 @@ as complete while required questions remain open.
 - DOS MZ/COM programs, Windows 3.x NE files, DOS extenders, VxDs, and
   Windows 95 thunks:
   [references/dos-and-win16.md](references/dos-and-win16.md)
+- Games, DirectX and OpenGL call tracking, shaders, and asset formats:
+  [references/games-and-graphics.md](references/games-and-graphics.md)
+- Capstone scans, the bundled scanner, and the limits of a linear sweep:
+  [references/scripted-disassembly.md](references/scripted-disassembly.md)
 - ASARs, extracted JavaScript, feature tracing, and version comparison:
   [references/javascript-applications.md](references/javascript-applications.md)
 - Android APK declarations, classes, methods, and static references:

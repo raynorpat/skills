@@ -117,6 +117,11 @@ reading.
 - QuickBASIC, Clipper, and similar: mostly runtime plus tables; look for a
   runtime module name such as `BRUN45` before reading any code.
 
+To list every interrupt a program uses, with the function number where it is
+set in straight-line code, run `scripts/capstone_scan.py dos-int` (see
+[scripted disassembly](scripted-disassembly.md)). For DOS games, continue with
+[games and graphics](games-and-graphics.md).
+
 Library signatures for these compilers exist for IDA (FLIRT) and are sparse
 for Ghidra. Without them, identify `printf`-family and file routines from
 their `INT 21h` use and format strings, name them, and move on.
