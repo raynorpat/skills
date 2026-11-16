@@ -14,8 +14,12 @@ from typing import Iterable, Sequence
 
 TEXT_EXTENSIONS = {".txt", ".md", ".markdown", ".text"}
 TITLE_PATTERN = re.compile(
-    r"^(?:第.{1,20}章(?:[\s:：—–-]|$)|chapter\s+\S+)", re.IGNORECASE
+    r"^(?:第.{1,20}章(?:[\s:：—–-]|$)|(?:chapter|part|book)\s+\S+"
+    r"|(?:prologue|epilogue|interlude|afterword)\b)",
+    re.IGNORECASE,
 )
+CJK_PATTERN = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]")
+LATIN_LETTER_PATTERN = re.compile(r"[A-Za-z]")
 LATIN_TOKEN_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9]*(?:[-'][A-Za-z0-9]+)*")
 LATIN_SEQUENCE_PATTERN = re.compile(
     r"[A-Za-z][A-Za-z0-9]*(?:[-'][A-Za-z0-9]+)*(?:[ \t]+[A-Za-z][A-Za-z0-9]*(?:[-'][A-Za-z0-9]+)*)+"
@@ -29,6 +33,21 @@ PROMPT_PATTERNS = tuple(
         r"请(?:接着|继续)(?:上文|下文|本章|正文)(?:扩写|改写|写作)?",
         r"请(?:扩写|改写|润色|输出)(?:以下|上述|本章|正文)",
         r"不要输出(?:解释|分析|标题|说明)",
+    )
+)
+# English editing instructions and chat-assistant residue. Anchored to the start
+# of a line so ordinary dialogue that happens to contain the words is not flagged.
+PROMPT_PATTERNS_EN = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"^\s*(?:certainly|sure|of course|absolutely)[!,.]\s+(?:here|i)\b",
+        r"^\s*here(?:'s| is) (?:the|a|your) (?:revised|rewritten|edited|updated|continued|next|full|polished)\b",
+        r"^\s*(?:continue|continuing) (?:from|the story from) (?:the )?(?:previous|above|last)\b",
+        r"^\s*(?:rewrite|revise|expand|polish|continue) (?:the )?(?:following|above|chapter|scene|passage)\b",
+        r"^\s*do not (?:output|include) (?:any )?(?:explanation|analysis|commentary|title)",
+        r"^\s*(?:i hope this helps|let me know if you(?:'d| would) like)\b",
+        r"^\s*as an ai\b",
+        r"^\s*\[?(?:word count|end of chapter|to be continued)\b.*\]?\s*:?\s*\d*\s*$",
     )
 )
 
@@ -47,7 +66,7 @@ class Finding:
 
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Check plain-text fiction for encoding damage, prompt or Markdown leakage, suspicious Latin fragments, quote imbalance, duplication, and whitespace."
+        description="Check plain-text fiction for encoding damage, prompt or Markdown leakage, stray foreign-script fragments, quote imbalance, duplication, and whitespace. Works on English and Chinese manuscripts."
     )
     parser.add_argument("target", type=Path, help="A manuscript file or directory")
     parser.add_argument(
@@ -55,7 +74,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
         action="append",
         default=[],
         metavar="TOKEN",
-        help="Allow one Latin token; may be repeated",
+        help="Allow one Latin token in a Chinese manuscript; may be repeated",
     )
     parser.add_argument(
         "--allowlist",
@@ -64,6 +83,13 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
         type=Path,
         metavar="FILE",
         help="UTF-8 file containing one allowed token per line; may be repeated",
+    )
+    parser.add_argument(
+        "--lang",
+        choices=("auto", "en", "zh"),
+        default="auto",
+        help="Manuscript language. 'auto' (default) picks per file from its script: "
+        "'zh' when CJK characters make up a meaningful share, otherwise 'en'.",
     )
     parser.add_argument(
         "--strict",
@@ -127,6 +153,79 @@ def paragraph_spans(lines: list[str]) -> list[tuple[int, str]]:
     return paragraphs
 
 
+def detect_language(text: str) -> str:
+    cjk = len(CJK_PATTERN.findall(text))
+    latin = len(LATIN_LETTER_PATTERN.findall(text))
+    # A Chinese manuscript with a few English names stays 'zh'; an English one
+    # with a few quoted characters stays 'en'.
+    return "zh" if cjk and cjk * 4 >= latin else "en"
+
+
+def check_cjk_fragments(path: Path, line_number: int, line: str) -> list[Finding]:
+    """English manuscripts: a run of CJK text is usually model or encoding leakage."""
+    match = re.search(CJK_PATTERN.pattern + "{2,}", line)
+    if not match:
+        return []
+    return [
+        Finding(
+            path,
+            line_number,
+            "warning",
+            "cjk-fragment",
+            f"unexpected CJK text in an English manuscript: {match.group(0)!r}",
+        )
+    ]
+
+
+def check_english_quotes(path: Path, text: str) -> list[Finding]:
+    """Per-paragraph double-quote balance.
+
+    English dialogue that runs across paragraphs leaves the earlier paragraphs
+    unclosed and reopens the next one, so one extra opening quote is accepted
+    when the following paragraph starts with a quote.
+    """
+    findings: list[Finding] = []
+    paragraphs = paragraph_spans(text.splitlines())
+    for index, (line_number, paragraph) in enumerate(paragraphs):
+        following = paragraphs[index + 1][1] if index + 1 < len(paragraphs) else ""
+        continues = following.lstrip()[:1] in {"\u201c", '"'}
+
+        curly = paragraph.count("\u201c") - paragraph.count("\u201d")
+        if curly and not (curly == 1 and continues):
+            findings.append(
+                Finding(
+                    path,
+                    line_number,
+                    "warning",
+                    "unbalanced-quote",
+                    "curly double quotes are unbalanced in this paragraph",
+                )
+            )
+        if paragraph.count('"') % 2 and not continues:
+            findings.append(
+                Finding(
+                    path,
+                    line_number,
+                    "warning",
+                    "unbalanced-quote",
+                    "straight double quotes are unbalanced in this paragraph",
+                )
+            )
+
+    if ("\u201c" in text or "\u201d" in text) and '"' in text:
+        offset = text.find('"')
+        findings.append(
+            Finding(
+                path,
+                line_number_at(text, offset),
+                "warning",
+                "mixed-quotes",
+                "manuscript mixes straight and curly double quotes",
+            )
+        )
+    return findings
+
+
 def check_latin_fragments(path: Path, line_number: int, line: str, allowed: set[str]) -> list[Finding]:
     findings: list[Finding] = []
 
@@ -169,8 +268,12 @@ def check_latin_fragments(path: Path, line_number: int, line: str, allowed: set[
     return findings
 
 
-def check_file(path: Path, allowed: set[str], require_title: bool) -> list[Finding]:
+def check_file(
+    path: Path, allowed: set[str], require_title: bool, lang: str = "auto"
+) -> list[Finding]:
     text = path.read_text(encoding="utf-8-sig")
+    language = detect_language(text) if lang == "auto" else lang
+    prompt_patterns = PROMPT_PATTERNS + (PROMPT_PATTERNS_EN if language == "en" else ())
     lines = text.splitlines(keepends=True)
     findings: list[Finding] = []
     is_markdown = path.suffix.casefold() in {".md", ".markdown"}
@@ -185,7 +288,7 @@ def check_file(path: Path, allowed: set[str], require_title: bool) -> list[Findi
             findings.append(
                 Finding(path, number, "warning", "trailing-whitespace", "trailing spaces or tabs")
             )
-        if any(pattern.search(line) for pattern in PROMPT_PATTERNS):
+        if any(pattern.search(line) for pattern in prompt_patterns):
             findings.append(
                 Finding(path, number, "error", "prompt-leak", "possible editing or generation instruction")
             )
@@ -199,11 +302,16 @@ def check_file(path: Path, allowed: set[str], require_title: bool) -> list[Findi
             findings.append(
                 Finding(path, number, "warning", "markdown-heading", "Markdown heading marker in manuscript")
             )
-        findings.extend(check_latin_fragments(path, number, line, allowed))
+        if language == "zh":
+            findings.extend(check_latin_fragments(path, number, line, allowed))
+        else:
+            findings.extend(check_cjk_fragments(path, number, line))
 
     opening_count = text.count("“")
     closing_count = text.count("”")
-    if opening_count != closing_count:
+    if language == "en":
+        findings.extend(check_english_quotes(path, text))
+    elif opening_count != closing_count:
         first_offset = min(
             (offset for offset in (text.find("“"), text.find("”")) if offset >= 0),
             default=0,
@@ -252,6 +360,11 @@ def check_file(path: Path, allowed: set[str], require_title: bool) -> list[Findi
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv if argv is not None else sys.argv[1:])
+    # Consoles with a legacy code page (Windows cp1252) cannot print CJK or curly
+    # quotes; escape them instead of crashing mid-report.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     try:
         allowed = load_allowlist(args.allowlist, args.allow_token)
         allowlist_paths = {path.resolve() for path in args.allowlist}
@@ -263,7 +376,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         findings = [
             finding
             for manuscript in manuscripts
-            for finding in check_file(manuscript, allowed, args.require_title)
+            for finding in check_file(manuscript, allowed, args.require_title, args.lang)
         ]
     except (OSError, UnicodeError) as error:
         print(str(error), file=sys.stderr)

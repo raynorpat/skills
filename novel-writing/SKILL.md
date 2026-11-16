@@ -204,7 +204,7 @@ If the fiction project already has local rules, style contracts, or manuscript-l
 5. Pull near-field full prose when revising language, style, or chapter continuity.
 6. Apply the hard rules before proposing prose changes.
 7. If reviewing, produce structured findings before any summary.
-8. When delivering plain-text manuscript files, run the bundled checker as `python <skill-directory>/scripts/check_manuscript_text.py <file-or-directory>`; review warnings instead of treating them as automatic prose defects.
+8. When delivering plain-text manuscript files, run the bundled checker as `python <skill-directory>/scripts/check_manuscript_text.py <file-or-directory>`; review warnings instead of treating them as automatic prose defects. It detects English or Chinese per file; pass `--lang en` or `--lang zh` to force one.
 9. If the task touches sensitive realism constraints and you are unsure, say what must be verified instead of bluffing.
 
 ## References

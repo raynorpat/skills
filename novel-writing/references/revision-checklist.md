@@ -99,6 +99,8 @@ Ask:
 
 Run the bundled checker as `python <skill-directory>/scripts/check_manuscript_text.py <file-or-directory>` when the output format and access allow it. Treat heuristic warnings as review prompts, not automatic literary defects.
 
+The checker picks English or Chinese per file from its script; force one with `--lang en` or `--lang zh`. In English it checks double-quote balance per paragraph (allowing dialogue that continues across paragraphs), mixed straight and curly quotes, stray CJK text, and leaked editing instructions or assistant replies. In Chinese it checks file-level quote balance and stray Latin fragments (`--allow-token` exempts names).
+
 ## High-Frequency False Assumptions
 
 Flag these aggressively:
