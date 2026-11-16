@@ -1,6 +1,8 @@
 # Sources
 
-Where the catalog comes from, what each source contributes, and how it may be reused. Tells and patterns are paraphrased in this repo, never copied verbatim.
+This skill is derived from [deslopify](https://github.com/axel-pm/deslopify) by Axel Sooriah (MIT). The list below is that project's source list for the general catalog in `tropes.md`. The form-specific rules in `forms.md` (blog posts, fiction, role play) were added here and are not drawn from these sources, except the stock-phrase examples credited to slop-forensics.
+
+Where the catalog comes from, what each source contributes, and how it may be reused. Tells and patterns are paraphrased in this skill, never copied verbatim.
 
 ## Primary
 

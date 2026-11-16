@@ -4,6 +4,8 @@ Every tell worth scanning for, grouped by category. The base catalog comes from 
 
 A reminder before you use it: a single occurrence of almost anything below is fine. You are hunting repetition, clustering, and density — not individual words.
 
+This catalog was built from expository writing (essays, articles, posts, docs). For fiction, role play, and blog-specific tells, and for which entries below to relax in those forms, read [forms.md](forms.md) first.
+
 ## 1. Word choice
 
 - **Magic adverbs**: "quietly", "deeply", "fundamentally", "remarkably", "arguably" used to inflate mundane statements. Delete or replace with something concrete.
@@ -57,7 +59,7 @@ A reminder before you use it: a single occurrence of almost anything below is fi
 - **Pedagogical voice**: "Let's break this down", "Let's unpack", "Let's explore", "Let's dive in".
 - **Vague attributions**: "experts argue", "industry reports suggest", "observers note" with no named source. Either name the source or cut the claim.
 - **Invented concept labels**: coined "X paradox / Y trap / Z creep" presented as established terms.
-- **Register mismatch**: polished, hard-hitting magazine prose in a context where no human writes that way — a cold email, a commit message, a Slack reply. Match the register the situation actually calls for. [Paul Graham]
+- **Register mismatch**: polished, hard-hitting magazine prose in a context where no human writes that way — a cold email, a commit message, a Slack reply, a character's casual dialogue. Match the register the situation actually calls for. [Paul Graham]
 - **Canned significance claims**: "has been profiled in national media", "maintains an active social media presence", "solidifying its status as…" — résumé-filler assertions of importance. [Wikipedia]
 
 ## 6. Content density
@@ -68,7 +70,7 @@ The deepest problem under all the surface tells: **low information density**. Sl
 
 ## 7. Creative-prose slop
 
-For fiction and narrative writing. Statistically over-represented phrases in LLM-generated stories: [slop-forensics / EQ-Bench]
+For fiction and narrative writing; the full fiction and role-play rules are in [forms.md](forms.md). Statistically over-represented phrases in LLM-generated stories: [slop-forensics / EQ-Bench]
 
 - "a symphony of", "a testament to", "palpable tension", "ethereal glow"
 - "barely above a whisper", "eyes glinted", "shivers down the spine", "heart pounding in her chest"
@@ -76,9 +78,9 @@ For fiction and narrative writing. Statistically over-represented phrases in LLM
 
 ## 8. Formatting
 
-- **Em-dash addiction**: cut to at most 2–3 in a whole piece; replace with commas, periods, or parentheses.
+- **Em-dash addiction**: cut to roughly 2–3 per thousand words in expository writing; replace with commas, periods, or parentheses. In fiction and role play, leave em dashes that mark interrupted speech or broken thought.
 - **Bold-first bullets**: every list item starting with a **bolded lead**. Remove the bolding unless it's genuinely a definition list.
-- **Unicode decoration**: replace → arrows and "smart"/'curly' quotes with plain words and straight quotes (in plain-text contexts).
+- **Unicode decoration**: replace → arrows with plain words. Replace "smart"/'curly' quotes with straight quotes only in plain-text contexts (code, config, terminals, commit messages); in published prose and fiction, curly quotes are correct.
 - **Over-structured documents**: Title Case On Every Heading, skipped heading levels, horizontal rules between every section, emoji as section bullets, tables where two sentences of prose would do. [Wikipedia]
 
 ## 9. Chatbot residue (mechanical pass)

@@ -1,65 +1,86 @@
 ---
-name: deslopify
-description: Edit writing to strip out AI-generated tells (em-dash abuse, "It's not X—it's Y", "delve", bold-first bullets, etc.) so it reads like a human wrote it. Accepts content inline or as a file path. Use when asked to "deslopify", "detrope", "de-slop", "remove AI tells", "make this sound less like AI", or to humanize/clean up a draft, blog post, README, or any prose.
+name: writing-deslop
+description: Write or edit prose so it reads like a person wrote it, not a model. Strips AI tells (em-dash abuse, "It's not X, it's Y", "delve", stock fiction phrases, formulaic role-play replies) from blog posts, essays, articles, stories, role play, docs, and READMEs. Use when drafting any of these, or when asked to "deslop", "deslopify", "detrope", "remove AI tells", "humanize", or "make this sound less like AI". Accepts content inline or as a file path.
 license: MIT
 ---
 
-# Deslopify
+# Writing Deslop
 
-You are a line editor whose single job is to remove AI writing tropes from a piece of content while preserving the author's meaning, facts, and intent. Make the prose read like a real human wrote it: varied, imperfect, specific.
+Remove AI writing tropes from prose while preserving the author's meaning, facts, voice, and intent. The result should read like a person wrote it: varied, imperfect, specific.
 
-## Task modes: rewrite vs review
+## Step 0: identify the form
 
-- **Rewrite** (default): clean the content and return it, followed by a short change list.
-- **Review** (when asked to "review", "audit", "flag", or "what's wrong with this"): do NOT rewrite the whole piece and do NOT edit any file. Return `Findings:` — a numbered list of `"exact quote" → trope name → suggested fix` — then a one-line `Verdict:` on how AI-tell-heavy it reads. One finding per instance; if the same trope repeats many times, one finding with a count and a couple of example quotes is enough. Use this mode when the author wants to keep control of the edits.
+The tells differ by form, and so does what counts as a legitimate device. Decide which form you are working in before touching anything, then read the matching section of [references/forms.md](references/forms.md).
 
-When unsure, rewrite.
+| Form | Examples | What changes |
+|---|---|---|
+| Expository | Blog post, essay, article, newsletter, README, docs, email | The general catalog applies as written. Blog posts have their own opener, closer, and SEO tells. |
+| Fiction | Short story, novel chapter, scene, fan fiction, poem | Rhetorical devices are tools, not tells. Hunt stock phrases, named emotions, uniform character voices, tidy endings. Never change plot, POV, tense, or canon. |
+| Role play | Collaborative fiction, character chat, tabletop narration, interactive story | Per-reply tells matter more than per-sentence ones: repeated reply shape, acting for the other player, drifting out of character. Keep the scene's established format. |
+
+Mixed pieces (a blog post that opens with an anecdote, a story with an essayistic narrator) take the rules of whichever form each passage is in.
+
+## Modes
+
+- **Draft**: you are writing new content. Apply the catalog as you write, then do one rewrite pass over your own draft before returning it. Return the content only, with no change list.
+- **Rewrite** (default for existing content): clean the content and return it, followed by a short change list.
+- **Review** (asked to "review", "audit", "flag", or "what's wrong with this"): do not rewrite the piece and do not edit any file. Return `Findings:` as a numbered list of `"exact quote" → trope name → suggested fix`, then a one-line `Verdict:` on how tell-heavy it reads. One finding per instance; a trope that repeats many times gets one finding with a count and two example quotes.
+
+When unsure between rewrite and review, rewrite.
 
 ## How to operate
 
-1. **Get the content.** It may be pasted in the prompt, or be a file path. If it's a file, Read it. If a path is given but ambiguous, Glob/Grep to locate it.
-2. **Load the full catalog.** The core tropes are listed below; the complete, expanded catalog lives in [references/tropes.md](references/tropes.md). Read it for any serious pass — it covers many tells the core list doesn't (false agency, hedging clusters, metronomic rhythm, creative-prose slop, chatbot residue strings, and more).
-3. **Scan for tropes.** Flag every instance.
-4. **Rewrite, don't just delete.** Replace each trope with plain, direct prose that says the same thing. Keep the author's voice, claims, and structure intact. Never invent facts to fill a gap.
-5. **Apply edits.** If you read from a file, edit the file in place (Edit/Write). If the content was pasted, produce the cleaned version.
-6. **Return the result.** Output the full cleaned content, then a short, plain bullet list of what you changed and why (e.g. "Removed 14 em dashes", "Cut 3 'it's not X, it's Y' reframes", "De-bolded bullet leads"). No fanfare.
+1. **Get the content.** It may be pasted or a file path. Read the file if given one; search for it if the path is ambiguous. For role play, also read the character or persona definition and enough prior turns to know the established voice and format.
+2. **Load the catalogs.** The general catalog is [references/tropes.md](references/tropes.md). The form-specific rules are in [references/forms.md](references/forms.md). Read both for any serious pass.
+3. **Scan.** Flag every instance, counting repeats.
+4. **Rewrite, don't just delete.** Replace each trope with plain, direct prose that does the same job. Keep voice, claims, and structure. Never invent facts, plot events, or character history to fill a gap.
+5. **Apply edits.** Edit the file in place if you read from one. Otherwise produce the cleaned version.
+6. **Return the result.** Full cleaned content, then (rewrite mode) a short plain list of what changed, such as "Removed 14 em dashes" or "Cut 6 stock physical reactions". In role play, return only the in-character reply unless asked for notes.
 
-If you were invoked by another agent rather than a human, your final message is the only thing the caller receives: it MUST contain the complete cleaned content, not just a changelog. When in doubt, return the full cleaned content — that satisfies both.
+If another agent invoked you, your final message is the only thing it receives: it must contain the complete cleaned content, not a changelog alone.
 
 ## Guiding rule
 
-Any single trope used once may be fine. The problem is repetition or clustering. Don't sand the writing into lifeless uniformity — a stray em dash or one rhetorical question is human. Cut the *patterns*, not all personality. When in doubt, favor the simplest plain-English phrasing.
+Any single trope used once may be fine. The problem is repetition and clustering. Do not sand the writing into uniformity: one rhetorical question or one stray em dash is human. Cut the patterns, not the personality. In expository writing, when in doubt, favor the simplest plain phrasing. In fiction and role play, when in doubt, favor the concrete detail over the stock one, and the character's voice over a neutral one.
 
 ## Core tropes (short list)
 
-The full catalog is in [references/tropes.md](references/tropes.md). The most common tells:
+The most common tells in any form. Full catalog: [references/tropes.md](references/tropes.md).
 
-- **Word choice**: "delve", "utilize" (→ use), "leverage", "robust", "streamline", "harness"; magic adverbs ("quietly", "deeply", "fundamentally", "remarkably"); grandiose nouns ("tapestry", "landscape", "paradigm", "ecosystem"); "serves as" / "stands as" / "represents" where "is" works.
-- **Sentence structure**: negative parallelism, the #1 tell ("It's not X — it's Y"); "Not X. Not Y. Just Z."; self-posed questions ("The X? A Y."); anaphora and tricolon abuse; filler transitions ("It's worth noting", "Importantly", "Notably"); trailing "-ing" analyses ("…highlighting its importance"); false ranges ("from X to Y").
-- **Paragraph structure**: short punchy fragments as standalone paragraphs; prose that's secretly a list ("The first… The second…").
-- **Tone**: false suspense ("Here's the kicker"); "Think of it as…"; "Imagine a world where…"; "let's be honest"; stakes inflation ("will fundamentally reshape everything"); pedagogical voice ("Let's unpack", "Let's dive in"); vague attributions ("experts argue"); invented concept labels ("the X paradox").
-- **Formatting**: em-dash addiction (cap at 2–3 per piece); bold-first bullets; → arrows and curly quotes in plain text.
-- **Composition**: intro-then-recap at every level; one metaphor beaten ten times; "Apple didn't build X. Facebook didn't build Y." stacking; the same thesis restated ten ways; "In conclusion"; "Despite its challenges…" acknowledge-then-dismiss.
+- **Word choice**: "delve", "utilize" (use), "leverage", "robust", "streamline", "harness"; magic adverbs ("quietly", "deeply", "fundamentally", "remarkably"); grandiose nouns ("tapestry", "landscape", "paradigm", "ecosystem"); "serves as" / "stands as" / "represents" where "is" works.
+- **Sentence structure**: negative parallelism, the top tell ("It's not X, it's Y"); "Not X. Not Y. Just Z."; self-posed questions ("The X? A Y."); anaphora and rule-of-three abuse; filler transitions ("It's worth noting", "Importantly"); trailing "-ing" analyses ("…highlighting its importance"); false ranges ("from X to Y").
+- **Paragraph structure**: short fragments as standalone paragraphs for manufactured emphasis; prose that is secretly a list.
+- **Tone**: false suspense ("Here's the kicker"); "Think of it as…"; "Imagine a world where…"; "let's be honest"; stakes inflation; pedagogical voice ("Let's unpack"); vague attributions ("experts argue"); invented concept labels ("the X paradox").
+- **Formatting**: em-dash addiction; bold-first bullets; decorative arrows and emoji.
+- **Composition**: intro-then-recap at every level; one metaphor beaten ten times; the same thesis restated ten ways; "In conclusion"; acknowledge-then-dismiss closers.
 
-## What you must NOT do
+Form-specific tells (short list; full rules in [references/forms.md](references/forms.md)):
 
-- Don't change the author's argument, conclusions, or facts.
-- Don't add new claims, sources, or examples.
-- Don't flatten genuine voice into bland corporate prose — the goal is human, not neutered.
-- Don't over-correct: leave the occasional single trope if it actually works.
-- Don't override an explicit house style. If the caller says a trope is allowed here ("em dashes are fine", "keep the curly quotes/arrows"), respect it — those instructions win over this catalog.
+- **Blog posts**: "In today's fast-paced world" openers; "Whether you're a beginner or an expert"; headline-as-colon-formula on every section; a closing call for comments; a summary that repeats the post.
+- **Fiction**: stock physical reactions ("a breath she didn't know she was holding", "heart pounding in her chest"); emotions named instead of shown; every character speaking in the same composed, self-aware voice; conflict resolved the moment it appears; a reflective, hopeful last paragraph.
+- **Role play**: the same reply shape every turn; ending every reply on a question to the other player; deciding the other player's actions or feelings; recapping what they just wrote; breaking character to comment or disclaim; the character softening into an agreeable version of itself.
 
-### Anti-overcorrection: things that are NOT proof of AI
+## What you must not do
 
-Some features get wrongly treated as tells. Do not strip these on sight (Wikipedia's editors keep an "ineffective indicators" list for exactly this reason):
+- Do not change the author's argument, conclusions, facts, plot, characters, point of view, or tense.
+- Do not add new claims, sources, examples, events, or backstory.
+- Do not flatten real voice into bland prose. A narrator or character who is pompous, florid, or repetitive on purpose stays that way.
+- Do not over-correct: leave the occasional single trope if it works.
+- Do not override an explicit house style, persona definition, or scene convention. If the caller says a trope is allowed here ("em dashes are fine", "this character speaks in triads", "keep the asterisk actions"), that wins over this catalog.
+- Do not sanitize content. This skill edits style only; tone, darkness, and subject matter belong to the author.
 
-- An em dash, used well and sparingly. Humans invented it.
-- Smart quotes or clean grammar — polished writing existed before 2022.
-- Individual words like "important", "significant", or "notable" in ordinary use.
-- A single rule of three, one rhetorical question, one metaphor. Once is style; five times is a pattern.
+### Things that are not proof of AI
 
-The test is always density and clustering, never a single occurrence.
+Do not strip these on sight:
+
+- An em dash used sparingly and well, including for interrupted dialogue.
+- Curly quotes, clean grammar, correct spelling.
+- Ordinary uses of "important", "significant", or "notable".
+- A single rule of three, one rhetorical question, one metaphor.
+- In fiction: sentence fragments, deliberate repetition, dialect, and long sentences. These are craft.
+
+The test is density and clustering, never a single occurrence.
 
 ---
 
-Primary catalog source: [tropes.fyi](https://tropes.fyi) by Ossama Chahib ([ossama.is](https://ossama.is)). Extended with the researched sources listed in [references/sources.md](references/sources.md).
+Derived from [deslopify](https://github.com/axel-pm/deslopify) by Axel Sooriah (MIT; see `LICENSE.txt`), whose catalog builds on [tropes.fyi](https://tropes.fyi) by Ossama Chahib. Source list: [references/sources.md](references/sources.md). The form-specific rules in `references/forms.md` are additions.
