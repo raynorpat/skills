@@ -14,7 +14,7 @@ from typing import Iterable, Sequence
 
 TEXT_EXTENSIONS = {".txt", ".md", ".markdown", ".text"}
 TITLE_PATTERN = re.compile(
-    r"^(?:第.{1,20}章(?:[\s:：—–-]|$)|(?:chapter|part|book)\s+\S+"
+    r"^(?:第.{1,20}章(?:[\s:：—–-]|$)|(?:chapter|part|book|volume)\s+\S+"
     r"|(?:prologue|epilogue|interlude|afterword)\b)",
     re.IGNORECASE,
 )
