@@ -1,7 +1,7 @@
 # Merge Evidence Standard
 
 What counts as proof that a branch's work is already in the default branch, and what does not.
-The workflow's investigator and refuter agents both read this file; the command's inline fallback path follows the same standard.
+The workflow's investigator and refuter agents both read this file; the skill's inline fallback path follows the same standard.
 
 ## The asymmetry that sets the bar
 

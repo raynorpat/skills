@@ -49,6 +49,12 @@ These six are linked. A driving skill decides what shapes the work and calls pla
 | [technical-ci-automation](technical-ci-automation/SKILL.md) | CI/CD pipelines and quality gates on GitHub Actions, Gitea Actions, or TeamCity. |
 | [technical-reverse-engineering](technical-reverse-engineering/SKILL.md) | Reverse engineering of native, managed, JavaScript, packaged, and firmware targets with the REA tool, which must be installed separately. Adds guides for DOS and 16-bit Windows targets, games and DirectX/OpenGL tracking, and Capstone scans. |
 
+### Repository maintenance
+
+| Skill | What it does |
+|---|---|
+| [repo-git-cleanup](repo-git-cleanup/SKILL.md) | Sorts local branches and worktrees into merged, squash-merged, superseded, needs review, and keep, then deletes only what you confirm at two gates. Runs only when you invoke it. In Claude Code the analysis runs as a workflow of subagents; other agents use the inline fallback. |
+
 ### Writing and design
 
 | Skill | What it does |
@@ -72,5 +78,6 @@ Every skill here started from someone else's work and was then renamed, generali
 | ui-deslop | [kmaida/deslop-skills](https://github.com/kmaida/deslop-skills/tree/main/deslop-ui) | None stated | Renamed; generation checklist and roughly double the catalog |
 | technical-reverse-engineering | [morluto/rea](https://github.com/morluto/rea/tree/main/.agents/skills/reverse-engineer-anything) | MIT | Renamed; DOS and 16-bit Windows, games and graphics, and Capstone references added, plus `scripts/capstone_scan.py` |
 | novel-writing | [wgwtest/novel-writing](https://github.com/wgwtest/novel-writing/tree/main/novel-writing) | MIT | Manuscript checker extended to English |
+| repo-git-cleanup | [trailofbits/skills](https://github.com/trailofbits/skills/tree/main/plugins/git-cleanup) | CC BY-SA 4.0 | Plugin slash command converted to a skill; plugin-root lookup replaced with the skill directory; evals not included. Share-alike: this skill stays under CC BY-SA 4.0 |
 
 Two upstreams have no license file: `kmaida/deslop-skills` (ui-deslop) and `multica-ai/andrej-karpathy-skills` (the guidelines inside technical-documentation). Get permission or replace that material before publishing this repo.

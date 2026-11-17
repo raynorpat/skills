@@ -1,4 +1,5 @@
 ---
+name: repo-git-cleanup
 description: "Safely analyzes and cleans up local git branches and worktrees, categorizing them as merged, squash-merged, superseded, or active work before deleting anything."
 argument-hint: "[repo-path]"
 disable-model-invocation: true
@@ -27,20 +28,19 @@ Workflow agents run in the background with no way to reach the user. Nothing des
 
 ## Phase 1: Run the Analysis Workflow
 
-`${CLAUDE_PLUGIN_ROOT}` is set in the Bash tool's environment, not in this prompt's text — nothing expands it for you here. **Resolve it first**, in the same call that finds the repo root:
+The skill directory is the folder that holds this `SKILL.md`. Claude Code states it when the skill loads ("Base directory for this skill"). Use its absolute path, and find the repo root:
 
 ```bash
-echo "$CLAUDE_PLUGIN_ROOT"
 git rev-parse --show-toplevel
 ```
 
-Then call the `Workflow` tool with `scriptPath` set to `<that plugin root>/workflows/analyze-branches.js` and this as `args`, both values substituted rather than passed as the literal `${CLAUDE_PLUGIN_ROOT}`:
+Then call the `Workflow` tool with `scriptPath` set to `<skill directory>/workflows/analyze-branches.js` and this as `args`, both values as absolute paths:
 
 ```json
-{ "repoPath": "<absolute path to the repo>", "pluginDir": "<that plugin root>" }
+{ "repoPath": "<absolute path to the repo>", "pluginDir": "<skill directory>" }
 ```
 
-This command being invoked is the opt-in that workflow needs.
+This skill being invoked is the opt-in that workflow needs.
 
 It runs three phases — survey, investigate, refute — and returns:
 
@@ -56,9 +56,9 @@ It runs three phases — survey, investigate, refute — and returns:
 
 If it throws with "survey returned zero local branches", the inventory failed — say so and stop. Do not report a clean repository.
 
-If it throws about an unreadable `scriptPath`, the path did not resolve — most likely `$CLAUDE_PLUGIN_ROOT` was empty or reached the tool unexpanded. Check what the `echo` above printed, and if there is no usable plugin root, take the inline fallback below rather than aborting the run.
+If it throws about an unreadable `scriptPath`, the path did not resolve. Check that `<skill directory>/workflows/analyze-branches.js` exists, and if you cannot find it, take the inline fallback below rather than aborting the run.
 
-**Fallback.** If the `Workflow` tool is unavailable, do the same analysis inline: read [merge-evidence.md](../references/merge-evidence.md), gather the state below, and apply the decision table in [Phase 2](#phase-2-check-the-workflows-work). It is slower and the refutation pass is on you, but the categories and the gates are identical.
+**Fallback.** If the `Workflow` tool is unavailable (it is specific to Claude Code, so this is the normal path in Codex, OpenCode, and other agents), do the same analysis inline: read [merge-evidence.md](references/merge-evidence.md), gather the state below, and apply the decision table in [Phase 2](#phase-2-check-the-workflows-work). It is slower and the refutation pass is on you, but the categories and the gates are identical.
 
 ```bash
 # Assign, then default with ${:-}. Do not fall back with `... | sed ... || echo main`:
@@ -151,7 +151,7 @@ WARNING: ../proj-auth has uncommitted changes:
 These changes will be LOST if you remove this worktree.
 ```
 
-Then use AskUserQuestion with options along the lines of:
+Then ask the user (with AskUserQuestion where the agent has it) with options along the lines of:
 
 - Delete all recommended (groups + merged + squash-merged)
 - Delete specific groups or categories
@@ -258,5 +258,10 @@ Then report what happened:
 
 | File | Content |
 |------|---------|
-| [analyze-branches.js](../workflows/analyze-branches.js) | The dynamic workflow: survey, investigate, refute. Read-only. |
-| [merge-evidence.md](../references/merge-evidence.md) | What counts as proof a branch is merged, and what doesn't |
+| [analyze-branches.js](workflows/analyze-branches.js) | The dynamic workflow: survey, investigate, refute. Read-only. |
+| [merge-evidence.md](references/merge-evidence.md) | What counts as proof a branch is merged, and what doesn't |
+| `tests/analyze-branches.test.mjs` | Stubs every agent and checks the workflow's triage. Run with `node` after editing the workflow. |
+
+---
+
+Adapted from the [git-cleanup plugin](https://github.com/trailofbits/skills/tree/main/plugins/git-cleanup) by Trail of Bits (Henrik Brodin), licensed CC BY-SA 4.0; see `LICENSE.txt`. Changes: the slash command became this `SKILL.md`, the plugin-root lookup became the skill directory, and the fallback is named as the path for agents without a `Workflow` tool. The workflow and tests are unmodified; the upstream evals are not included.
